@@ -15,8 +15,6 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id := params["id"]
 
-	// rangeData := RangeProvider.Get2(id)
-	// product := rangeData.Items[0]
 	product := RangeProvider.Get(id).Items[0]
 
 	genericProduct := product["genericProduct"]

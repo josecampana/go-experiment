@@ -1,3 +1,5 @@
+//Generar un providers.range.xxx es demasiado complicado porque hay que ir función a función y decir el tipo que devuelven etc...
+
 // package providers
 
 // import (
