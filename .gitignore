@@ -1,0 +1,9 @@
+src/__debug*
+
+# binary: (OSX and Linux)
+main
+pmp
+# binary: (Windows)
+main.exe
+pmp.exe
+
