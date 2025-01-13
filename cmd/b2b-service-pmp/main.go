@@ -1,18 +1,21 @@
 package main
 
 import (
-	"b2b-service-pmp/env"
-	routes "b2b-service-pmp/src/api"
-	logger "b2b-service-pmp/src/modules"
 	"log"
 	"net/http"
+
+	logger "github.com/ingka-group-digital/b2b-service-pmp/pkg"
+
+	env "github.com/ingka-group-digital/b2b-service-pmp/configs"
+	routes "github.com/ingka-group-digital/b2b-service-pmp/internal/routes"
 )
 
 func main() {
-	logger.Init()
+	
 	config := env.Get()
 	router := routes.InitRoutes()
 
 	log.Println("Listening requests\t➜ http://localhost:" + config.Port)
+	logger.Init()
 	log.Fatal(http.ListenAndServe(":"+config.Port, router))
 }

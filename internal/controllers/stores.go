@@ -1,9 +1,12 @@
 package controllers
 
+//just playing a bit with controllers, params and so on...
+
 import (
-	"b2b-service-pmp/src/api/constants"
 	"encoding/json"
 	"net/http"
+
+	constants "github.com/ingka-group-digital/b2b-service-pmp/internal"
 
 	"github.com/gorilla/mux"
 )

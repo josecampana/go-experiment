@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	constants "b2b-service-pmp/src/api/constants"
-	// logger "b2b-service-pmp/src/modules"
-	RangeProvider "b2b-service-pmp/src/providers"
 	"encoding/json"
 	"net/http"
 	"strings"
+
+	constants "github.com/ingka-group-digital/b2b-service-pmp/internal"
+
+	RangeProvider "github.com/ingka-group-digital/b2b-service-pmp/internal/providers"
 
 	"github.com/gorilla/mux"
 	"golang.org/x/exp/slog"
