@@ -18,9 +18,6 @@ type BaseConfig struct {
 	Port      string `json:"port"`
 	BasePath  string `json:"basePath"`
 	LogLevel  string `json:"logLevel"`
-	Providers struct {
-		Range string `json:"range"`
-	}
 }
 
 type Config struct {
