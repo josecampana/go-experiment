@@ -53,6 +53,8 @@ func GetProducts(w http.ResponseWriter, r *http.Request) {
 
 	slog.Info("new request for get products", "ids", ids, "options", options)
 
+	// slog.Info("new request for get products", "ids", ids, "options", options)
+
 	products, err := RangeProvider.Get(ids, options)
 
 	if err != nil {

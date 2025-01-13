@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	config "github.com/ingka-group-digital/b2b-service-pmp/configs"
+	logger "github.com/ingka-group-digital/b2b-service-pmp/pkg"
 
 	"github.com/go-resty/resty/v2"
-	"golang.org/x/exp/slog"
 )
 
 type RangeResponse struct {
@@ -25,6 +25,8 @@ type GetOptions struct {
 }
 
 func Get(ids [](string), options GetOptions) (RangeResponse, error) {
+	log := logger.WithModule("RangeProvider")
+
 	urlBase := config.Get().Providers.Range
 	client := resty.New()
 
@@ -36,12 +38,14 @@ func Get(ids [](string), options GetOptions) (RangeResponse, error) {
 		URL += "&store=" + options.Store
 	}
 
+	log.Debug("calling external API", "url", URL, "method", "GET")
+
 	resp, err := client.R().
 		SetResult(&RangeResponse{}).
 		Get(URL)
 
 	if err != nil {
-		slog.Error("request error calling external API", "url", URL, "method", "GET", "error", err)
+		log.Error("request error calling external API", "url", URL, "method", "GET", "error", err)
 
 		return RangeResponse{}, fmt.Errorf("error getting range info: %w", err)
 	}
