@@ -61,7 +61,7 @@ func Get() *slog.Logger {
 
 func WithModule(module string) *slog.Logger {
 	if instance == nil {
-		return Init(&module)
+		return Init(nil)
 	}
 
 	return instance.With("module", &module)
