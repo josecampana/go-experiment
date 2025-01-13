@@ -9,17 +9,26 @@ import (
 	"sync"
 )
 
-type Config struct {
+type ProvidersConfig struct {
+	Range string `json:"range"`
+}
+
+type BaseConfig struct {
 	AppName   string `json:"appName"`
 	Port      string `json:"port"`
 	BasePath  string `json:"basePath"`
 	LogLevel  string `json:"logLevel"`
 	Providers struct {
-		Range string `json:"range" default:"http://localhost:3001"`
+		Range string `json:"range"`
 	}
 }
 
-// singleton
+type Config struct {
+	BaseConfig
+	Providers ProvidersConfig `json:"providers"`
+}
+
+// singleton management
 var (
 	instance *Config
 	once     sync.Once
@@ -90,18 +99,12 @@ func createConfig() *Config {
 	}
 
 	return baseConfig
-
-	// port := os.Getenv("PORT")
-	// if port == "" {
-	// 	port = "3000"
-	// }
-
-	// return Config{Port: port, BasePath: "/range", AppName: "b2b-service-range"}
 }
 
 func Get() *Config {
 	once.Do(func() {
 		instance = createConfig()
 	})
+
 	return instance
 }
