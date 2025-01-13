@@ -2,11 +2,11 @@ package RangeProvider
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"strings"
 
 	"github.com/go-resty/resty/v2"
+	"golang.org/x/exp/slog"
 )
 
 type RangeResponse struct {
@@ -22,7 +22,7 @@ type GetOptions struct {
 	Content    string
 }
 
-func Get(ids [](string), options GetOptions) RangeResponse {
+func Get(ids [](string), options GetOptions) (RangeResponse, error) {
 	client := resty.New()
 
 	URL := fmt.Sprintf("https://services.ifb.ingka.com/range/v3/%s/%s/products?productContent=%s&ids=%s", options.RetailUnit, options.Language, url.QueryEscape(options.Content), url.QueryEscape(strings.Join(ids, ",")))
@@ -38,10 +38,15 @@ func Get(ids [](string), options GetOptions) RangeResponse {
 		Get(URL)
 
 	if err != nil {
-		log.Fatalf("request error calling %s: %v", URL, err)
+		slog.Error("request error calling external API", "url", URL, "method", "GET", "error", err)
+
+		return RangeResponse{}, fmt.Errorf("error getting range info: %w", err)
 	}
 
 	response := resp.Result().(*RangeResponse)
 
-	return *response
+	return *response, nil
 }
+
+//logs:
+//https://www.youtube.com/watch?v=gd_Vyb5vEw0

@@ -2,22 +2,37 @@ package controllers
 
 import (
 	constants "b2b-service-pmp/src/api/constants"
-	RangeProvider "b2b-service-pmp/src/providers/range"
+	// logger "b2b-service-pmp/src/modules"
+	RangeProvider "b2b-service-pmp/src/providers"
 	"encoding/json"
 	"net/http"
 	"strings"
 
 	"github.com/gorilla/mux"
+	"golang.org/x/exp/slog"
 )
+
+type ErrorResponse struct {
+	Message string `json:"message"`
+}
 
 func GetProducts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(constants.CONTENT_TYPE, constants.JSON)
+
 	params := mux.Vars(r)
 	retailUnit := params["retailUnit"]
 	language := params["language"]
 
 	queryParams := r.URL.Query()
-	ids := strings.Split(queryParams.Get("ids"), ",")
+	rawIds := queryParams.Get("ids")
+
+	if rawIds == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "ids parameter is required"})
+		return
+	}
+
+	ids := strings.Split(rawIds, ",")
 
 	productContent := queryParams.Get("productContent")
 	if productContent == "" {
@@ -35,17 +50,15 @@ func GetProducts(w http.ResponseWriter, r *http.Request) {
 		Content:    productContent,
 	}
 
-	products := RangeProvider.Get(ids, options)
+	slog.Info("new request for get products", "ids", ids, "options", options)
 
-	// genericProduct := product["genericProduct"]
-	// fakeid := product["_id"]
-	// color := product["colours"]
-	// product["_fakeId"] = product["_id"].(string) // this is a type assertion
-	// product["___fistro"] = "fistro"
+	products, err := RangeProvider.Get(ids, options)
 
-	// //to avoid the error of unused vars:
-	// log.Println(fakeid, product["_fakeId"], color, genericProduct)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: err.Error()})
+		return
+	}
 
-	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(products)
 }

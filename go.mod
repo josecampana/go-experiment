@@ -7,4 +7,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 )
 
-require golang.org/x/net v0.33.0 // indirect
+require (
+	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8 // indirect
+	golang.org/x/net v0.33.0 // indirect
+)
