@@ -11,7 +11,8 @@
     "mode": "debug",
     "program": "${workspaceFolder}/cmd/b2b-service-pmp/main.go",
     "env": {
-      "ENV": "production"
+      "ENV": "production",
+      "LOG_LEVEL": "debug"
     }
   }
   ]

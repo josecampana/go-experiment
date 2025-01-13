@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	env "github.com/ingka-group-digital/b2b-service-pmp/configs"
+	config "github.com/ingka-group-digital/b2b-service-pmp/configs"
 	controllers "github.com/ingka-group-digital/b2b-service-pmp/internal/controllers"
 
 	"github.com/gorilla/mux"
@@ -18,7 +18,7 @@ func logRoute(basePath string) func(method string, path string) {
 }
 
 func InitRoutes() *mux.Router {
-	config := env.Get()
+	config := config.Get()
 	router := mux.NewRouter()
 	apiRouter := router.PathPrefix(config.BasePath).Subrouter()
 
