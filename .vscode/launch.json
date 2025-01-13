@@ -9,7 +9,10 @@
     "type": "go",
     "request": "launch",
     "mode": "debug",
-    "program": "${workspaceFolder}/cmd/b2b-service-pmp/main.go"
+    "program": "${workspaceFolder}/cmd/b2b-service-pmp/main.go",
+    "env": {
+      "ENV": "production"
+    }
   }
   ]
 }

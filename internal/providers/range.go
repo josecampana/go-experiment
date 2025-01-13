@@ -5,6 +5,8 @@ import (
 	"net/url"
 	"strings"
 
+	env "github.com/ingka-group-digital/b2b-service-pmp/configs"
+
 	"github.com/go-resty/resty/v2"
 	"golang.org/x/exp/slog"
 )
@@ -23,9 +25,10 @@ type GetOptions struct {
 }
 
 func Get(ids [](string), options GetOptions) (RangeResponse, error) {
+	urlBase := env.Get().Providers.Range
 	client := resty.New()
 
-	URL := fmt.Sprintf("https://services.ifb.ingka.com/range/v3/%s/%s/products?productContent=%s&ids=%s", options.RetailUnit, options.Language, url.QueryEscape(options.Content), url.QueryEscape(strings.Join(ids, ",")))
+	URL := fmt.Sprintf("%s/v3/%s/%s/products?productContent=%s&ids=%s", urlBase, options.RetailUnit, options.Language, url.QueryEscape(options.Content), url.QueryEscape(strings.Join(ids, ",")))
 	if options.PostalCode != "" {
 		URL += "&postalCode=" + options.PostalCode
 	}
