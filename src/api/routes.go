@@ -42,7 +42,9 @@ func InitRoutes() *mux.Router {
 	apiRouter.HandleFunc("/stores", controllers.GetStores).Methods("GET")
 	apiRouter.HandleFunc("/stores", controllers.CreateStore).Methods("POST")
 	apiRouter.HandleFunc("/stores/{storeId}", controllers.GetStoreById).Methods("GET")
-	apiRouter.HandleFunc("/product/{id}", controllers.GetProduct).Methods("GET")
+
+	//range experiment
+	apiRouter.HandleFunc("/v3/{retailUnit}/{language}/products", controllers.GetProducts).Methods("GET")
 
 	logRoute(config.BasePath)("GET", "/")
 	logRoute(config.BasePath)("GET", "/stores")

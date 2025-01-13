@@ -15,5 +15,5 @@ func Get() Config {
 		port = "3000"
 	}
 
-	return Config{Port: port, BasePath: "/pmp"}
+	return Config{Port: port, BasePath: "/range"}
 }

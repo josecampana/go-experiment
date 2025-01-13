@@ -4,28 +4,48 @@ import (
 	constants "b2b-service-pmp/src/api/constants"
 	RangeProvider "b2b-service-pmp/src/providers/range"
 	"encoding/json"
-	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
 
-func GetProduct(w http.ResponseWriter, r *http.Request) {
+func GetProducts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(constants.CONTENT_TYPE, constants.JSON)
 	params := mux.Vars(r)
-	id := params["id"]
+	retailUnit := params["retailUnit"]
+	language := params["language"]
 
-	product := RangeProvider.Get(id).Items[0]
+	queryParams := r.URL.Query()
+	ids := strings.Split(queryParams.Get("ids"), ",")
 
-	genericProduct := product["genericProduct"]
-	fakeid := product["_id"]
-	color := product["colours"]
-	product["_fakeId"] = product["_id"].(string) // this is a type assertion
-	product["___fistro"] = "fistro"
+	productContent := queryParams.Get("productContent")
+	if productContent == "" {
+		productContent = "PRICE,PRICES,AVAILABILITY,VARIANTS,EXPAND_CHILDS,PARSE_IMAGES,PACKAGE_INFO"
+	}
 
-	//to avoid the error of unused vars:
-	log.Println(fakeid, product["_fakeId"], color, genericProduct)
+	postalCode := queryParams.Get("postalCode")
+	store := queryParams.Get("store")
+
+	options := RangeProvider.GetOptions{
+		RetailUnit: retailUnit,
+		Language:   language,
+		PostalCode: postalCode,
+		Store:      store,
+		Content:    productContent,
+	}
+
+	products := RangeProvider.Get(ids, options)
+
+	// genericProduct := product["genericProduct"]
+	// fakeid := product["_id"]
+	// color := product["colours"]
+	// product["_fakeId"] = product["_id"].(string) // this is a type assertion
+	// product["___fistro"] = "fistro"
+
+	// //to avoid the error of unused vars:
+	// log.Println(fakeid, product["_fakeId"], color, genericProduct)
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(product)
+	json.NewEncoder(w).Encode(products)
 }

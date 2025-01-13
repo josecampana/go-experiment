@@ -1,7 +1,10 @@
 package RangeProvider
 
 import (
+	"fmt"
 	"log"
+	"net/url"
+	"strings"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -11,16 +14,31 @@ type RangeResponse struct {
 	Items []map[string]interface{} `json:"items"` // Array de items con propiedades dinámicas
 }
 
-func Get(id string) RangeResponse {
+type GetOptions struct {
+	RetailUnit string
+	Language   string
+	PostalCode string
+	Store      string
+	Content    string
+}
+
+func Get(ids [](string), options GetOptions) RangeResponse {
 	client := resty.New()
-	url := "https://services.ifb.ingka.com/range/v3/us/en/products?productContent=PRICE%2CPRICES%2CAVAILABILITY%2CVARIANTS%2CEXPAND_CHILDS%2CPARSE_IMAGES%2CPACKAGE_INFO%2CSAFETY_WARNING%2CCATEGORIES&ids=" + id
+
+	URL := fmt.Sprintf("https://services.ifb.ingka.com/range/v3/%s/%s/products?productContent=%s&ids=%s", options.RetailUnit, options.Language, url.QueryEscape(options.Content), url.QueryEscape(strings.Join(ids, ",")))
+	if options.PostalCode != "" {
+		URL += "&postalCode=" + options.PostalCode
+	}
+	if options.Store != "" {
+		URL += "&store=" + options.Store
+	}
 
 	resp, err := client.R().
 		SetResult(&RangeResponse{}).
-		Get(url)
+		Get(URL)
 
 	if err != nil {
-		log.Fatalf("request error calling %s: %v", url, err)
+		log.Fatalf("request error calling %s: %v", URL, err)
 	}
 
 	response := resp.Result().(*RangeResponse)
