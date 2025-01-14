@@ -5,12 +5,11 @@ import (
 	"net/http"
 	"strings"
 
-	constants "github.com/ingka-group-digital/b2b-service-pmp/internal"
+	constants "github.com/ingka-group-digital/b2b-service-pmp/internal/constants"
 
 	RangeProvider "github.com/ingka-group-digital/b2b-service-pmp/internal/providers"
 
 	"github.com/gorilla/mux"
-	"golang.org/x/exp/slog"
 )
 
 type ErrorResponse struct {
@@ -49,15 +48,12 @@ func GetProducts(w http.ResponseWriter, r *http.Request) {
 		PostalCode: postalCode,
 		Store:      store,
 		Content:    productContent,
+		Context:    r.Context(),
 	}
 
-	slog.Info("new request for get products", "ids", ids, "options", options)
-
-	// slog.Info("new request for get products", "ids", ids, "options", options)
-
 	products, err := RangeProvider.Get(ids, options)
-
 	if err != nil {
+
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(ErrorResponse{Message: err.Error()})
 		return

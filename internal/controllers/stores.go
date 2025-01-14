@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	constants "github.com/ingka-group-digital/b2b-service-pmp/internal"
+	constants "github.com/ingka-group-digital/b2b-service-pmp/internal/constants"
 
 	"github.com/gorilla/mux"
 )

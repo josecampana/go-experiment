@@ -4,24 +4,27 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"reflect"
 	"sync"
+	"time"
+
+	"io"
+
+	"golang.org/x/mod/modfile"
 )
 
 type ProvidersConfig struct {
 	Range string `json:"range"`
 }
 
-type BaseConfig struct {
-	AppName   string `json:"appName"`
-	Port      string `json:"port"`
-	BasePath  string `json:"basePath"`
-	LogLevel  string `json:"logLevel"`
-}
-
 type Config struct {
-	BaseConfig
+	AppName   string          `json:"appName"`
+	Port      string          `json:"port"`
+	BasePath  string          `json:"basePath"`
+	LogLevel  string          `json:"logLevel"`
+	Timeout   time.Duration   `json:"timeout"`
 	Providers ProvidersConfig `json:"providers"`
 }
 
@@ -30,6 +33,28 @@ var (
 	instance *Config
 	once     sync.Once
 )
+
+func getAppName() (string, error) {
+	workDir, err := os.Getwd()
+	path := filepath.Join(workDir, "../../", "go.mod")
+	file, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return "", err
+	}
+
+	modFile, err := modfile.Parse("go.mod", data, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return modFile.Module.Mod.Path, nil
+}
 
 func loadFromFile(filename string, config *Config) error {
 	workDir, err := os.Getwd()
@@ -78,7 +103,7 @@ func createConfig() *Config {
 		err := loadFromFile(fmt.Sprintf("env/config.%s.json", env), envConfig)
 
 		if err != nil {
-			return &Config{}
+			panic(fmt.Sprintf("error loading config file for ENV '%s' => %v", env, err))
 		}
 
 		combineConfigs(baseConfig, envConfig)
@@ -93,6 +118,11 @@ func createConfig() *Config {
 		if logLevel != "" {
 			baseConfig.LogLevel = logLevel
 		}
+	}
+
+	appName, err := getAppName()
+	if err == nil {
+		baseConfig.AppName = path.Base(appName)
 	}
 
 	return baseConfig

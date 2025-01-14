@@ -5,13 +5,34 @@
   "version": "0.2.0",
   "configurations": [
   {
-    "name": "Debug",
+    "name": "production",
     "type": "go",
     "request": "launch",
     "mode": "debug",
     "program": "${workspaceFolder}/cmd/b2b-service-pmp/main.go",
     "env": {
       "ENV": "production",
+      "LOG_LEVEL": "debug"
+    }
+  },
+    {
+    "name": "default",
+    "type": "go",
+    "request": "launch",
+    "mode": "debug",
+    "program": "${workspaceFolder}/cmd/b2b-service-pmp/main.go",
+    "env": {
+      "ENV": "production",
+    }
+  },
+    {
+    "name": "test timeout",
+    "type": "go",
+    "request": "launch",
+    "mode": "debug",
+    "program": "${workspaceFolder}/cmd/b2b-service-pmp/main.go",
+    "env": {
+      "ENV": "timeout",
       "LOG_LEVEL": "debug"
     }
   }

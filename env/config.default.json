@@ -1,9 +1,9 @@
 {
   "logLevel": "info",
-  "appName": "b2b-service-range",
   "port": "3000",
   "basePath": "/range",
   "providers": {
     "range": "https://dev.services.ifb.ingka.com/range"
-  }
+  },
+  "timeout": 30
 }

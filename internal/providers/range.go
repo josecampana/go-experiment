@@ -1,12 +1,13 @@
 package RangeProvider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strings"
 
 	config "github.com/ingka-group-digital/b2b-service-pmp/configs"
-	logger "github.com/ingka-group-digital/b2b-service-pmp/pkg"
+	ContextHelper "github.com/ingka-group-digital/b2b-service-pmp/internal/context"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -22,10 +23,12 @@ type GetOptions struct {
 	PostalCode string
 	Store      string
 	Content    string
+	Context    context.Context
 }
 
 func Get(ids [](string), options GetOptions) (RangeResponse, error) {
-	log := logger.WithModule("RangeProvider")
+	logger := ContextHelper.Logger(options.Context)
+	transactionId := ContextHelper.TransactionId(options.Context)
 
 	urlBase := config.Get().Providers.Range
 	client := resty.New()
@@ -38,16 +41,19 @@ func Get(ids [](string), options GetOptions) (RangeResponse, error) {
 		URL += "&store=" + options.Store
 	}
 
-	log.Debug("calling external API", "url", URL, "method", "GET")
+	logger.Debug("calling external API", "url", URL, "method", "GET")
 
 	resp, err := client.R().
+		SetContext(options.Context).
+		SetHeader("Content-Type", "application/json").
+		SetHeader("x-transaction-id", transactionId).
 		SetResult(&RangeResponse{}).
 		Get(URL)
 
 	if err != nil {
-		log.Error("request error calling external API", "url", URL, "method", "GET", "error", err)
+		logger.Error("request error calling external API", err)
 
-		return RangeResponse{}, fmt.Errorf("error getting range info: %w", err)
+		return RangeResponse{}, err
 	}
 
 	response := resp.Result().(*RangeResponse)

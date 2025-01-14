@@ -7,6 +7,7 @@ import (
 
 	config "github.com/ingka-group-digital/b2b-service-pmp/configs"
 	controllers "github.com/ingka-group-digital/b2b-service-pmp/internal/controllers"
+	middlewares "github.com/ingka-group-digital/b2b-service-pmp/internal/middlewares"
 
 	"github.com/gorilla/mux"
 )
@@ -20,6 +21,8 @@ func logRoute(basePath string) func(method string, path string) {
 func InitRoutes() *mux.Router {
 	config := config.Get()
 	router := mux.NewRouter()
+	router.Use(middlewares.ContextMW)
+
 	apiRouter := router.PathPrefix(config.BasePath).Subrouter()
 
 	// solves the problem of trailing slash
