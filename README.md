@@ -18,3 +18,7 @@ Multiple choices:
 
 - build the binary with: `./scripts/build.sh`
 - execute it with `./scripts/run.sh`
+
+## Undertanding directory layout
+
+Check: [/golang-standards/project-layout](https://github.com/golang-standards/project-layout)
